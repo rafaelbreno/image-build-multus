@@ -41,7 +41,7 @@ jobs:
       with:
         image: hardened-multus-cni
         tag: ${{ github.event.release.tag_name }}
-        public-repo: rancher
+        public-repo: rafiusky
         public-username: ${{ env.DOCKER_USERNAME }}
         public-password: ${{ env.DOCKER_PASSWORD }}
         push-to-prime: false
@@ -52,7 +52,7 @@ jobs:
       with:
         image: hardened-multus-thick
         tag: ${{ github.event.release.tag_name }}
-        public-repo: rancher
+        public-repo: rafiusky
         public-username: ${{ env.DOCKER_USERNAME }}
         public-password: ${{ env.DOCKER_PASSWORD }}
         push-to-prime: false
