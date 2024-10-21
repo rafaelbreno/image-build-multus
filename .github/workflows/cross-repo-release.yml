@@ -1,0 +1,32 @@
+name: Cross-Repository Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Get release info
+        id: release_info
+        run: |
+          echo "tag_name=${{ github.event.release.tag_name }}" >> $GITHUB_OUTPUT
+          echo "release_name=${{ github.event.release.name }}" >> $GITHUB_OUTPUT
+          echo "body<<EOF" >> $GITHUB_OUTPUT
+          echo "${{ github.event.release.body }}" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create release in rafaelbreno/rancher
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ steps.release_info.outputs.tag_name }}" \
+            --repo rafaelbreno/rancher \
+            --title "${{ steps.release_info.outputs.release_name }}" \
+            --notes "Release created automatically based on foo/bar release.
+
+          ${{ steps.release_info.outputs.body }}"
