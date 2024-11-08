@@ -1,7 +1,7 @@
-ARG GO_IMAGE=rancher/hardened-build-base:v1.22.7b1
+ARG GO_IMAGE=rancher/hardened-build-base:v1.21.11b3
 
 # Image that provides cross compilation tooling.
-FROM --platform=$BUILDPLATFORM rancher/mirrored-tonistiigi-xx:1.3.0 AS xx
+FROM --platform=$BUILDPLATFORM rancher/mirrored-tonistiigi-xx:1.5.0 AS xx
 
 FROM --platform=$BUILDPLATFORM ${GO_IMAGE} AS base-builder
 # copy xx scripts to your build stage
@@ -13,7 +13,7 @@ RUN set -x && \
 
 # Build the multus project
 FROM base-builder AS multus-builder
-ARG TAG=v4.1.0
+ARG TAG=v4.1.3
 ARG SRC=github.com/k8snetworkplumbingwg/multus-cni
 ARG PKG=github.com/k8snetworkplumbingwg/multus-cni
 RUN git clone --depth=1 https://${SRC}.git $GOPATH/src/${PKG}
@@ -54,4 +54,5 @@ FROM scratch AS multus-thick
 COPY --from=multus-builder  /go/src/github.com/k8snetworkplumbingwg/multus-cni/LICENSE /usr/src/multus-cni/LICENSE
 COPY --from=strip_binary  /multus-daemon /usr/src/multus-cni/bin/multus-daemon
 COPY --from=strip_binary  /multus-shim /usr/src/multus-cni/bin/multus-shim
+COPY --from=strip_binary    /install_multus /
 ENTRYPOINT [ "/usr/src/multus-cni/bin/multus-daemon" ]
